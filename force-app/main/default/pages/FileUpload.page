@@ -1,0 +1,240 @@
+<apex:page >
+
+  <script
+
+   src="https://code.jquery.com/jquery-3.2.1.min.js"
+
+   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+
+   crossorigin="anonymous"></script>
+
+    
+
+  <script type="text/javascript">
+
+    const __ACCESSTOKEN__ = '{!$Api.Session_ID}';
+
+  function doRest(){
+
+    console.log('running rest');
+
+    $.ajax({
+
+     type: "GET",
+
+     url: 'https://dyno-brooklyn-6398-dev-ed.my.localhost.sfdcdev.salesforce.com:7829/services/data/v51.0/sobjects/Account',
+
+     success: function( data ) {
+
+      console.log(data);
+
+      $(".rest").text( JSON.stringify(data) );
+
+     },
+
+     error: function(XMLHttpRequest, textStatus, errorThrown) {
+
+       console.log(XMLHttpRequest,textStatus, errorThrown)
+
+       //alert('ERROR: Check Console for details');
+
+     },
+
+     headers: {
+
+      'Authorization': 'Bearer ' + __ACCESSTOKEN__
+
+     },
+
+     dataType: 'json',
+
+    });
+
+  }
+
+   
+
+  function doBulk(){
+
+    console.log('running bulk');
+
+    $.ajax({
+
+     type: "POST",
+
+     dataType: "json",
+
+     url: 'https://dyno-brooklyn-6398-dev-ed.my.localhost.sfdcdev.salesforce.com:7829/services/async/53/job',
+
+     data: JSON.stringify({
+
+       "object":"account",
+
+       "operation": "insert",
+
+       "contentType": "JSON"
+
+     }),
+
+     success: function( data ) {
+
+      console.log(data);
+
+      $(".bulk").text( JSON.stringify(data) );
+
+     },
+
+     error: function(XMLHttpRequest, textStatus, errorThrown) {
+
+       console.log(XMLHttpRequest,textStatus, errorThrown)
+
+       //alert('ERROR: Check Console for details');
+
+     },      
+
+     headers: {
+
+      'X-SFDC-Session': __ACCESSTOKEN__
+
+     },
+
+     dataType: 'json',
+
+    });
+
+  }
+
+   
+
+  function doBulk2(){
+
+    console.log('running bulk');
+
+    $.ajax({
+
+     type: "POST",
+
+     dataType: "json",
+
+     url: 'https://dyno-brooklyn-6398-dev-ed.my.localhost.sfdcdev.salesforce.com:7829/services/data/v51.0/jobs/ingest',
+
+     data: JSON.stringify({
+
+       "object":"account",
+
+       "operation": "insert"
+
+     }),
+
+     contentType: 'application/json',
+
+     success: function( data ) {
+
+      console.log(data);
+
+      $(".bulk2").text( JSON.stringify(data) );
+
+     },
+
+     error: function(XMLHttpRequest, textStatus, errorThrown) {
+
+       console.log(XMLHttpRequest,textStatus, errorThrown)
+
+       //alert('ERROR: Check Console for details');
+
+     },      
+
+     headers: {
+
+      'Authorization': 'Bearer ' + __ACCESSTOKEN__
+
+     },
+
+     dataType: 'json',
+
+    });
+
+  }
+
+     
+
+  </script>
+
+  <div>
+
+    Instructions: Click each button. The Rest Request will successfully be returned, while the Bulk request fails at the <a href="https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request">Pre-flight (OPTIONS) request</a>. It never even makes the POST.  
+
+     If you remove the CORS Whitelist <a href="https://na46.salesforce.com/0740H0000008OPL">found here</a>, the REST Request will also fail on pre-flight.
+
+  <div>
+
+    In the Chrome Developer console you can see the exception details. If you change to the network tab and make the request again, you can see the raw headers and response.
+
+  </div>
+
+     
+
+  </div>
+
+  <br/>
+
+  <button onclick="doRest();">
+
+    Run Rest Request
+
+  </button>
+
+   
+
+  <button onclick="doBulk();">
+
+    Run Bulk Request
+
+  </button>
+
+  <button onclick="doBulk2();">
+
+    Run Bulk 2.0 Request
+
+  </button>
+
+  <hr/>
+
+  <h2>
+
+  Rest Result
+
+  </h2>  
+
+  <pre class="rest">
+
+     
+
+  </pre>
+
+  <h2>
+
+    Bulk Result
+
+  </h2>
+
+  <pre class="bulk">
+
+   
+
+  </pre>
+
+  <h2>
+
+    Bulk 2.0 Result
+
+  </h2>
+
+  <pre class="bulk2">
+
+   
+
+  </pre>
+
+</apex:page>
+
